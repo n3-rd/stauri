@@ -41,7 +41,11 @@
 		"@tauri-apps/api": "^1.5.3",
 		"bits-ui": "^0.21.3",
 		"clsx": "^2.1.0",
+		"dexie": "^4.0.4",
+		"howler": "^2.2.4",
 		"lucide-svelte": "^0.367.0",
+		"mode-watcher": "^0.3.0",
+		"p-limit": "^5.0.0",
 		"tailwind-merge": "^2.2.2",
 		"tailwind-variants": "^0.2.1"
 	}

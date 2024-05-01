@@ -1,11 +1,13 @@
 <script>
 	import Titlebar from '$lib/components/Titlebar.svelte';
+	import { ModeWatcher } from 'mode-watcher';
 	import '../app.pcss';
 	import { fly } from 'svelte/transition';
 
 	export let data;
 </script>
 
+<ModeWatcher />
 <Titlebar title="Stauri" />
 {#key data.url}
 	<div
