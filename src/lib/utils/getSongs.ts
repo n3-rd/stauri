@@ -1,7 +1,7 @@
 import { audioDir } from '@tauri-apps/api/path';
 import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
 import { db } from '$lib/db';
-import { getAudioMetadata } from './metatada';
+import { getAudioMetadata, savePicture } from './metatada';
 
 export const readAllFiles = async () => {
     const audioDirPath = await audioDir();
@@ -41,7 +41,7 @@ export const addFiles = async (file: any) => {
         let title = metaData.title;
         let duration = metaData.duration;
         let year = metaData.year;
-        let picture = metaData.picture;
+        let artwork = metaData.artwork;
         let filePath = file;
 
         const pushSong = async () => {
@@ -54,10 +54,13 @@ export const addFiles = async (file: any) => {
                     fileName: fileName,
                     duration: duration,
                     year: year,
-                    filePath: filePath
+                    filePath: filePath,
+
                 });
 
                 const sanitizedFileName = sanitizeFileName(title + artist);
+
+                await savePicture(sanitizedFileName, artwork);
             } catch (err) {
                 console.log(err);
             }

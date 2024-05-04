@@ -3,6 +3,7 @@
 	import SideBar from '$lib/components/SideBar.svelte';
 	import * as Table from '$lib/components/ui/table';
 	import { db } from '$lib/db';
+	import { addToQueue, queue } from '$lib/stores/player-store';
 	import { listAllSongs, readAllFiles } from '$lib/utils/getSongs';
 	import { playAudio } from '$lib/utils/player';
 	import { liveQuery } from 'dexie';
@@ -13,14 +14,15 @@
 		songs = value;
 	});
 
-	const playSong = async (filePath: string) => {
-		console.log(`playing ${filePath}`);
+	const playSong = async (filePath: string, song: any) => {
 		await playAudio(filePath);
-		console.log('done');
 	};
 
 	onMount(async () => {
 		await readAllFiles();
+		// Add initial songs to the queue
+		songs.forEach((song) => addToQueue(song));
+		console.log('songs', $queue);
 	});
 </script>
 
@@ -40,7 +42,7 @@
 			</Table.Header>
 			<Table.Body>
 				{#each songs as song}
-					<Table.Row class="cursor-pointer" on:click={async () => playSong(song.filePath)}>
+					<Table.Row class="cursor-pointer" on:click={async () => playSong(song)}>
 						<Table.Cell class="line-clamp-1 font-medium">{song.title}</Table.Cell>
 						<Table.Cell class="">{song.artist}</Table.Cell>
 						<Table.Cell class="">{song.album}</Table.Cell>
