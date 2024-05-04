@@ -1,69 +1,71 @@
-import { convertFileSrc } from "@tauri-apps/api/tauri";
+import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { platform } from '@tauri-apps/api/os';
-import { invoke } from "@tauri-apps/api";
+import { invoke } from '@tauri-apps/api';
 // @ts-ignore
 import { Howl, Howler } from 'howler';
-import type { AudioMetadata } from "./metatada";
-import { nowPlaying, queue } from "$lib/stores/player-store";
+import type { AudioMetadata } from './metatada';
+import { nowPlaying, playing, queue } from '$lib/stores/player-store';
 
 const convertFileSrc2 = async (path: string) => {
-    return await invoke('convert_file_src_2', { path })
-}
+	return await invoke('convert_file_src_2', { path });
+};
 
 export let sound: Howl;
 
-
 export async function playAudio(song: AudioMetadata) {
-    const url = song.filePath;
-    const platformName = await platform();
-    let musicUrl = null;
+	const url = song.filePath;
+	const platformName = await platform();
+	let musicUrl = null;
 
-    if (platformName === 'linux') {
-        musicUrl = await convertFileSrc2(url);
-    } else {
-        musicUrl = convertFileSrc(url);
-    }
+	if (platformName === 'linux') {
+		musicUrl = await convertFileSrc2(url);
+	} else {
+		musicUrl = convertFileSrc(url);
+	}
 
-    // Stop the currently playing audio if any
-    if (sound && sound.playing()) {
-        await stopAudio();
-    }
+	// Stop the currently playing audio if any
+	if (sound && sound.playing()) {
+		await stopAudio();
+	}
 
-    // Load the new audio source
-    sound = new Howl({
-        src: [musicUrl],
-        html5: true,
-        onplay: () => {
-            // Update the nowPlaying state when the audio starts playing
-            nowPlaying.set(song);
-        },
-    });
+	// Load the new audio source
+	sound = new Howl({
+		src: [musicUrl],
+		html5: true,
+		onplay: () => {
+			// Update the nowPlaying state when the audio starts playing
+			nowPlaying.set(song);
+			playing.set(true);
+		}
+	});
 
-    // Play the new audio
-    sound.play();
+	// Play the new audio
+	sound.play();
 }
 
 export async function stopAudio() {
-    if (sound) {
-        sound.stop();
-        sound.unload();
-    }
+	if (sound) {
+		sound.stop();
+		sound.unload();
+		playing.set(false);
+	}
 }
 
 export async function pauseAudio() {
-    if (sound && sound.playing()) {
-        sound.pause();
-    }
+	if (sound && sound.playing()) {
+		sound.pause();
+		playing.set(false);
+	}
 }
 
 export async function resumeAudio() {
-    if (sound && !sound.playing()) {
-        sound.play();
-    }
+	if (sound && !sound.playing()) {
+		sound.play();
+		playing.set(true);
+	}
 }
 
-export const isPlaying = () => {
-    let res = sound && sound.playing();
-    return JSON.stringify(res)
-
-};
+// export const isPlaying = () => {
+// 	let res = sound && sound.playing();
+// 	return JSON.stringify(res);
+// };

@@ -1,15 +1,15 @@
-<script>
-	import { isPlaying, pauseAudio, resumeAudio, sound } from '$lib/utils/player';
+<script lang="ts">
+	import { pauseAudio, resumeAudio, sound } from '$lib/utils/player';
 	import { Film, MonitorPlay, Pause, Play, Search, SkipBack, SkipForward } from 'lucide-svelte';
 	import Button from './ui/button/button.svelte';
-	import { nowPlaying, playNext, playPrevious } from '$lib/stores/player-store';
+	import { nowPlaying, playing } from '$lib/stores/player-store';
 	import Artwork from './miniplayer/Artwork.svelte';
 
 	let soundInfo;
-	let isAudioPlaying;
+	let isAudioPlaying: Boolean;
 
 	$: {
-		isAudioPlaying = sound ? sound.playing() : false;
+		isAudioPlaying = $playing;
 		soundInfo = sound;
 		console.log('playing', soundInfo);
 	}
@@ -28,13 +28,7 @@
 		</div>
 		<div class="progress-bar w-1/2" />
 		<nav class="flex gap-6 text-xl font-semibold lg:gap-3">
-			<Button
-				variant="outline"
-				size="icon"
-				on:click={async () => {
-					await playPrevious();
-				}}
-			>
+			<Button variant="outline" size="icon">
 				<SkipBack />
 			</Button>
 			{#if isAudioPlaying}
@@ -58,13 +52,7 @@
 					<Play />
 				</Button>
 			{/if}
-			<Button
-				variant="outline"
-				size="icon"
-				on:click={async () => {
-					await playNext();
-				}}
-			>
+			<Button variant="outline" size="icon">
 				<SkipForward />
 			</Button>
 		</nav>

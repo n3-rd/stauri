@@ -3,7 +3,7 @@
 	import SideBar from '$lib/components/SideBar.svelte';
 	import * as Table from '$lib/components/ui/table';
 	import { db } from '$lib/db';
-	import { addToQueue, queue } from '$lib/stores/player-store';
+	import { queue } from '$lib/stores/player-store';
 	import { listAllSongs, readAllFiles } from '$lib/utils/getSongs';
 	import { playAudio } from '$lib/utils/player';
 	import { liveQuery } from 'dexie';
@@ -20,9 +20,6 @@
 
 	onMount(async () => {
 		await readAllFiles();
-		// Add initial songs to the queue
-		songs.forEach((song) => addToQueue(song));
-		console.log('songs', $queue);
 	});
 </script>
 
